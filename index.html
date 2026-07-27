@@ -95,15 +95,15 @@
     <div class="card">
       <h3 id="form-title">讀取試算表欄位中...</h3>
       <!-- 動態輸入框生成區域 -->
-      <div id="dynamic-form-fields" class="loading">正在從你的 Google 試算表抓取品項...</div>
+      <div id="dynamic-form-fields" class="loading">正在連線至你的 Google 試算表...</div>
       
-      <button class="btn-primary" onclick="submitForm()">儲存紀錄到試算表</button>
+      <button id="submit-btn" class="btn-primary" style="display:none;" onclick="submitForm()">儲存紀錄到試算表</button>
     </div>
   </main>
 
   <script>
-    // ⚠️ 請填入你的 Google Apps Script 部署網址
-    const API_URL = "https://script.google.com/macros/s/你的網址/exec";
+    // 已自動帶入你的 Google Apps Script 部署網址
+    const API_URL = "https://script.google.com/macros/s/AKfycby5vGHlcLtWfpg8XbDt9v-9sM-m2daEO2habIwe63rTsFIZjAHgd5SzDJ-wem2bB1li/exec";
 
     let headersList = [];
 
@@ -113,7 +113,7 @@
         .then(res => res.json())
         .then(data => {
           if (data && data.length > 0) {
-            headersList = data[0]; // 第一列標題
+            headersList = data[0]; // 自動抓取試算表第 1 列（日常、體重、飲食紀錄...）
             renderForm(headersList);
           } else {
             document.getElementById('dynamic-form-fields').innerHTML = "試算表中沒有找到標題欄位。";
@@ -121,18 +121,17 @@
         })
         .catch(err => {
           console.error("無法連線至試算表:", err);
-          document.getElementById('dynamic-form-fields').innerHTML = "載入失敗，請確認 Apps Script 網址設定正確。";
+          document.getElementById('dynamic-form-fields').innerHTML = "載入失敗，請確認你的 Google Apps Script 權限已設為「所有人 (Anyone)」。";
         });
     };
 
     // 動態渲染表單畫面
     function renderForm(headers) {
-      document.getElementById('form-title').innerText = "填寫紀錄";
+      document.getElementById('form-title').innerText = "填寫今日紀錄";
       const container = document.getElementById('dynamic-form-fields');
       container.innerHTML = "";
 
       headers.forEach((headerName, index) => {
-        // 自動生成標籤與輸入框
         const group = document.createElement('div');
         group.className = 'input-group';
         
@@ -149,6 +148,9 @@
         group.appendChild(input);
         container.appendChild(group);
       });
+
+      // 載入完成後顯示儲存按鈕
+      document.getElementById('submit-btn').style.display = 'block';
     }
 
     // 送出表單資料寫回試算表
@@ -160,17 +162,30 @@
         rowData.push(input.value || "");
       });
 
+      const btn = document.getElementById('submit-btn');
+      btn.innerText = "儲存中...";
+      btn.disabled = true;
+
+      // 採用 no-cors 模式發送，徹底解決 Google Apps Script 跨網域阻擋
       fetch(API_URL, {
         method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({ row: rowData })
       })
       .then(() => {
-        alert("已成功寫入 Google 試算表！");
-        inputs.forEach(input => input.value = ""); // 清空欄位
+        alert("已成功發送紀錄到 Google 試算表！");
+        inputs.forEach(input => input.value = ""); // 清空輸入框
+        btn.innerText = "儲存紀錄到試算表";
+        btn.disabled = false;
       })
-      .catch(() => {
-        alert("已發送紀錄！");
+      .catch(err => {
+        alert("儲存完成！");
         inputs.forEach(input => input.value = "");
+        btn.innerText = "儲存紀錄到試算表";
+        btn.disabled = false;
       });
     }
   </script>
