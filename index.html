@@ -55,7 +55,6 @@
       font-weight: bold;
       margin-bottom: 4px;
       font-size: 0.95rem;
-      color: var(--text-color);
     }
 
     input, textarea, button {
@@ -76,58 +75,102 @@
       margin-top: 10px;
     }
 
-    button.btn-primary:active {
-      background-color: #826a5c;
+    /* 底部導覽列 */
+    nav {
+      display: flex;
+      background-color: var(--card-bg);
+      border-top: 1px solid #e0d8d0;
+      padding: 8px 0;
     }
 
-    .loading {
+    .nav-item {
+      flex: 1;
       text-align: center;
+      padding: 8px 0;
+      font-size: 0.85rem;
       color: #8c827a;
-      padding: 20px;
+      cursor: pointer;
+    }
+
+    .nav-item.active {
+      color: var(--primary-color);
+      font-weight: bold;
+    }
+
+    .nav-icon {
+      font-size: 1.4rem;
+      display: block;
     }
   </style>
 </head>
 <body>
 
-  <header id="page-title">📝 我的隨手記</header>
+  <header id="page-title">💅 美容紀錄</header>
 
   <main>
     <div class="card">
-      <h3 id="form-title">讀取試算表欄位中...</h3>
-      <!-- 動態輸入框生成區域 -->
-      <div id="dynamic-form-fields" class="loading">正在連線至你的 Google 試算表...</div>
-      
+      <h3 id="form-title">讀取中...</h3>
+      <div id="dynamic-form-fields">正在讀取試算表欄位...</div>
       <button id="submit-btn" class="btn-primary" style="display:none;" onclick="submitForm()">儲存紀錄到試算表</button>
     </div>
   </main>
 
+  <!-- 底部選單回歸 -->
+  <nav>
+    <div class="nav-item active" onclick="switchTab('美容紀錄', '💅 美容紀錄', this)">
+      <span class="nav-icon">💅</span>美容
+    </div>
+    <div class="nav-item" onclick="switchTab('日常記帳', '💰 日常記帳', this)">
+      <span class="nav-icon">💰</span>記帳
+    </div>
+    <div class="nav-item" onclick="switchTab('隨手雜記', '📝 隨手雜記', this)">
+      <span class="nav-icon">📝</span>雜記
+    </div>
+    <div class="nav-item" onclick="switchTab('減肥紀錄', '⚖️ 減肥紀錄', this)">
+      <span class="nav-icon">⚖️</span>減肥
+    </div>
+  </nav>
+
   <script>
-    // 已自動帶入你的 Google Apps Script 部署網址
     const API_URL = "https://script.google.com/macros/s/AKfycby5vGHlcLtWfpg8XbDt9v-9sM-m2daEO2habIwe63rTsFIZjAHgd5SzDJ-wem2bB1li/exec";
+    
+    let currentSheet = "美容紀錄"; // 預設第一個分頁
 
-    let headersList = [];
-
-    // 頁面打開時，自動抓取試算表第 1 列當作輸入欄位
     window.onload = function() {
-      fetch(API_URL)
+      loadSheetFields(currentSheet);
+    };
+
+    // 切換分頁邏輯
+    function switchTab(sheetName, title, element) {
+      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+      element.classList.add('active');
+      document.getElementById('page-title').innerText = title;
+      
+      currentSheet = sheetName;
+      loadSheetFields(sheetName);
+    }
+
+    // 抓取指定工作表的標題欄位
+    function loadSheetFields(sheetName) {
+      document.getElementById('dynamic-form-fields').innerHTML = "載入欄位中...";
+      document.getElementById('submit-btn').style.display = 'none';
+
+      fetch(`${API_URL}?sheet=${encodeURIComponent(sheetName)}`)
         .then(res => res.json())
         .then(data => {
           if (data && data.length > 0) {
-            headersList = data[0]; // 自動抓取試算表第 1 列（日常、體重、飲食紀錄...）
-            renderForm(headersList);
+            renderForm(data[0]); // 抓第一列標題
           } else {
-            document.getElementById('dynamic-form-fields').innerHTML = "試算表中沒有找到標題欄位。";
+            document.getElementById('dynamic-form-fields').innerHTML = "此工作表無資料或未建立標題。";
           }
         })
         .catch(err => {
-          console.error("無法連線至試算表:", err);
-          document.getElementById('dynamic-form-fields').innerHTML = "載入失敗，請確認你的 Google Apps Script 權限已設為「所有人 (Anyone)」。";
+          document.getElementById('dynamic-form-fields').innerHTML = "載入失敗，請確認試算表分頁名稱是否符合。";
         });
-    };
+    }
 
-    // 動態渲染表單畫面
     function renderForm(headers) {
-      document.getElementById('form-title').innerText = "填寫今日紀錄";
+      document.getElementById('form-title').innerText = `填寫 [${currentSheet}]`;
       const container = document.getElementById('dynamic-form-fields');
       container.innerHTML = "";
 
@@ -141,7 +184,6 @@
         const input = document.createElement('input');
         input.type = 'text';
         input.placeholder = `請輸入${headerName}...`;
-        input.dataset.index = index;
         input.className = 'field-input';
 
         group.appendChild(label);
@@ -149,40 +191,26 @@
         container.appendChild(group);
       });
 
-      // 載入完成後顯示儲存按鈕
       document.getElementById('submit-btn').style.display = 'block';
     }
 
-    // 送出表單資料寫回試算表
     function submitForm() {
       const inputs = document.querySelectorAll('.field-input');
       let rowData = [];
-
-      inputs.forEach(input => {
-        rowData.push(input.value || "");
-      });
+      inputs.forEach(input => rowData.push(input.value || ""));
 
       const btn = document.getElementById('submit-btn');
       btn.innerText = "儲存中...";
       btn.disabled = true;
 
-      // 採用 no-cors 模式發送，徹底解決 Google Apps Script 跨網域阻擋
       fetch(API_URL, {
         method: "POST",
         mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ row: rowData })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sheetName: currentSheet, row: rowData })
       })
       .then(() => {
-        alert("已成功發送紀錄到 Google 試算表！");
-        inputs.forEach(input => input.value = ""); // 清空輸入框
-        btn.innerText = "儲存紀錄到試算表";
-        btn.disabled = false;
-      })
-      .catch(err => {
-        alert("儲存完成！");
+        alert(`已成功寫入 ${currentSheet}！`);
         inputs.forEach(input => input.value = "");
         btn.innerText = "儲存紀錄到試算表";
         btn.disabled = false;
