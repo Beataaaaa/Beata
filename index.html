@@ -3,54 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>✨ 我的可愛隨手記 App ✨</title>
-  <!-- 導入圓潤可愛字體 Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
-
+  <title>美女 隨手記</title>
   <style>
     :root {
-      --bg-color: #fff6f8;
+      --bg-color: #f4f3f0;
       --card-bg: #ffffff;
-      --primary-color: #ff85a2;
-      --primary-hover: #ff6b8b;
-      --accent-color: #ffd1dc;
-      --yellow-accent: #fff3bf;
-      --text-color: #5c4b51;
-      --shadow-color: rgba(255, 133, 162, 0.25);
+      --primary-color: #333333;
+      --accent-color: #666666;
+      --border-color: #e2e0dc;
+      --text-color: #2b2b2b;
+      --active-color: #1a1a1a;
     }
 
     body {
       margin: 0;
       padding: 0;
-      font-family: 'Zen Maru Gothic', -apple-system, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       background-color: var(--bg-color);
       color: var(--text-color);
       display: flex;
       flex-direction: column;
       height: 100vh;
-      /* 背景加上可愛的小點點水玉圖案 */
-      background-image: radial-gradient(#ffcad4 1.5px, transparent 1.5px);
-      background-size: 18px 18px;
     }
 
-    /* 頂部標題列 */
     header {
-      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-      color: white;
+      background-color: var(--card-bg);
+      color: var(--primary-color);
       text-align: center;
       padding: 18px;
-      font-size: 1.3rem;
-      font-weight: 900;
-      letter-spacing: 1px;
-      box-shadow: 0 4px 15px var(--shadow-color);
-      border-radius: 0 0 24px 24px;
-      text-shadow: 1px 2px 4px rgba(0,0,0,0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border-color);
     }
 
     main {
@@ -59,59 +43,45 @@
       overflow-y: auto;
     }
 
-    /* 卡片區塊 */
     .card {
       background: var(--card-bg);
-      border-radius: 24px;
+      border-radius: 16px;
       padding: 20px;
       margin-bottom: 20px;
-      box-shadow: 0 8px 20px var(--shadow-color);
-      border: 3px solid #ffe3e8;
-      position: relative;
-    }
-
-    /* 可愛裝飾小插圖裝飾在卡片角落 */
-    .card::after {
-      content: "🌸";
-      position: absolute;
-      top: 12px;
-      right: 16px;
-      font-size: 1.2rem;
-      opacity: 0.8;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      border: 1px solid var(--border-color);
     }
 
     h3 {
       margin-top: 0;
-      color: #ff5277;
-      font-size: 1.2rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      border-bottom: 2px dashed #ffd1dc;
-      padding-bottom: 8px;
+      margin-bottom: 18px;
+      color: var(--primary-color);
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
     }
 
     .input-group {
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
     label {
       display: block;
-      font-weight: 700;
+      font-weight: 600;
       margin-bottom: 6px;
-      font-size: 0.95rem;
-      color: #7a5c65;
+      font-size: 0.9rem;
+      color: #555555;
     }
 
     input, textarea {
       width: 100%;
-      padding: 12px 16px;
-      border: 2px solid #ffe3e8;
-      background-color: #fffafa;
-      border-radius: 16px;
+      padding: 12px 14px;
+      border: 1px solid var(--border-color);
+      background-color: #fafafa;
+      border-radius: 10px;
       box-sizing: border-box;
-      font-size: 1rem;
-      font-family: inherit;
+      font-size: 0.95rem;
       color: var(--text-color);
       transition: all 0.2s ease;
     }
@@ -120,39 +90,32 @@
       outline: none;
       border-color: var(--primary-color);
       background-color: #ffffff;
-      box-shadow: 0 0 0 4px var(--shadow-color);
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
     }
 
-    /* 果凍感按鈕 */
     button.btn-primary {
-      background: linear-gradient(135deg, #ff85a2 0%, #ff6b8b 100%);
+      background-color: var(--primary-color);
       color: white;
       border: none;
-      font-weight: 900;
-      font-size: 1.1rem;
+      font-weight: 600;
+      font-size: 1rem;
       padding: 14px;
-      border-radius: 20px;
+      border-radius: 10px;
       cursor: pointer;
-      margin-top: 12px;
-      box-shadow: 0 6px 15px var(--shadow-color);
-      transition: transform 0.1s ease, background 0.2s;
+      margin-top: 8px;
       width: 100%;
-      font-family: inherit;
+      transition: background-color 0.2s ease;
     }
 
     button.btn-primary:active {
-      transform: scale(0.97);
-      box-shadow: 0 2px 8px var(--shadow-color);
+      background-color: #000000;
     }
 
-    /* 底部可愛選單 */
     nav {
       display: flex;
       background-color: var(--card-bg);
-      border-radius: 24px 24px 0 0;
-      box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+      border-top: 1px solid var(--border-color);
       padding: 10px 0;
-      border-top: 2px solid #ffe3e8;
     }
 
     .nav-item {
@@ -160,69 +123,64 @@
       text-align: center;
       padding: 6px 0;
       font-size: 0.85rem;
-      font-weight: 700;
-      color: #b59ea6;
+      font-weight: 500;
+      color: #888888;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: color 0.2s ease;
     }
 
     .nav-item.active {
-      color: #ff5277;
-      transform: translateY(-2px);
+      color: var(--active-color);
+      font-weight: 700;
     }
 
     .nav-icon {
-      font-size: 1.6rem;
+      font-size: 1.3rem;
       display: block;
-      margin-bottom: 2px;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+      margin-bottom: 3px;
     }
 
     .debug-status {
       font-size: 0.8rem;
-      color: #c4aab2;
-      margin-top: 10px;
+      color: #aaaaaa;
+      margin-top: 12px;
       text-align: center;
     }
 
     .loading-box {
       text-align: center;
       padding: 30px;
-      color: #ff85a2;
-      font-weight: bold;
-      font-size: 1.05rem;
+      color: #666666;
+      font-size: 0.95rem;
     }
   </style>
 </head>
 <body>
 
-  <header id="page-title">
-    <span>🎀</span> 美容紀錄 <span>✨</span>
-  </header>
+  <header id="page-title">美女 隨手記</header>
 
   <main>
     <div class="card">
-      <h3 id="form-title">🍧 資料加載中...</h3>
+      <h3 id="form-title">載入中...</h3>
       <div id="dynamic-form-fields" class="loading-box">
-        🍓 正在從 Google 試算表拿資料...
+        正在連線至 Google 試算表...
       </div>
-      <button id="submit-btn" class="btn-primary" style="display:none;" onclick="submitForm()">💖 儲存紀錄到試算表 🐾</button>
+      <button id="submit-btn" class="btn-primary" style="display:none;" onclick="submitForm()">儲存紀錄</button>
       <div id="debug-info" class="debug-status"></div>
     </div>
   </main>
 
-  <!-- 可愛底部選單 (配上超可愛圖示) -->
   <nav>
-    <div class="nav-item active" onclick="switchTab('美容紀錄', '💅 美容紀錄', '🎀', this)">
+    <div class="nav-item active" onclick="switchTab('美容紀錄', '美容紀錄', this)">
       <span class="nav-icon">💅</span>美容
     </div>
-    <div class="nav-item" onclick="switchTab('日常記帳', '💰 日常記帳', '🍰', this)">
+    <div class="nav-item" onclick="switchTab('日常記帳', '日常記帳', this)">
       <span class="nav-icon">💰</span>記帳
     </div>
-    <div class="nav-item" onclick="switchTab('隨手雜記', '📝 隨手雜記', '🧸', this)">
+    <div class="nav-item" onclick="switchTab('隨手雜記', '隨手雜記', this)">
       <span class="nav-icon">📝</span>雜記
     </div>
-    <div class="nav-item" onclick="switchTab('減肥紀錄', '⚖️ 減肥紀錄', '🍓', this)">
+    <div class="nav-item" onclick="switchTab('減肥紀錄', '減肥紀錄', this)">
       <span class="nav-icon">⚖️</span>減肥
     </div>
   </nav>
@@ -236,17 +194,17 @@
       loadSheetFields(currentSheet);
     };
 
-    function switchTab(sheetName, title, icon, element) {
+    function switchTab(sheetName, title, element) {
       document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
       element.classList.add('active');
-      document.getElementById('page-title').innerHTML = `<span>${icon}</span> ${title} <span>✨</span>`;
+      document.getElementById('page-title').innerText = title;
       
       currentSheet = sheetName;
       loadSheetFields(sheetName);
     }
 
     function loadSheetFields(sheetName) {
-      document.getElementById('dynamic-form-fields').innerHTML = '<div class="loading-box">🍧 正在抓取最新品項...</div>';
+      document.getElementById('dynamic-form-fields').innerHTML = '<div class="loading-box">正在讀取欄位...</div>';
       document.getElementById('submit-btn').style.display = 'none';
       document.getElementById('debug-info').innerText = "";
 
@@ -257,24 +215,24 @@
         .then(res => res.json())
         .then(data => {
           if (data && data.error) {
-            document.getElementById('dynamic-form-fields').innerHTML = "❌ 試算表錯誤：" + data.error;
+            document.getElementById('dynamic-form-fields').innerHTML = "試算表錯誤：" + data.error;
             return;
           }
 
           if (data && data.length > 0) {
             renderForm(data[0]);
-            document.getElementById('debug-info').innerText = `✨ 已同步 [${sheetName}] 欄位`;
+            document.getElementById('debug-info').innerText = `已同步 [${sheetName}] 欄位`;
           } else {
-            document.getElementById('dynamic-form-fields').innerHTML = "😭 工作表未找到標題欄位";
+            document.getElementById('dynamic-form-fields').innerHTML = "未找到標題欄位";
           }
         })
         .catch(err => {
-          document.getElementById('dynamic-form-fields').innerHTML = "😿 連線失敗，請稍後再試！";
+          document.getElementById('dynamic-form-fields').innerHTML = "連線失敗，請稍後再試。";
         });
     }
 
     function renderForm(headers) {
-      document.getElementById('form-title').innerText = `🌸 填寫 [${currentSheet}]`;
+      document.getElementById('form-title').innerText = `填寫 [${currentSheet}]`;
       const container = document.getElementById('dynamic-form-fields');
       container.innerHTML = "";
 
@@ -285,7 +243,7 @@
         group.className = 'input-group';
         
         const label = document.createElement('label');
-        label.innerText = `✨ ${headerName}`;
+        label.innerText = headerName;
         
         const input = document.createElement('input');
         input.type = 'text';
@@ -306,7 +264,7 @@
       inputs.forEach(input => rowData.push(input.value || ""));
 
       const btn = document.getElementById('submit-btn');
-      btn.innerText = "⏳ 儲存中...";
+      btn.innerText = "儲存中...";
       btn.disabled = true;
 
       fetch(API_URL, {
@@ -316,15 +274,15 @@
         body: JSON.stringify({ sheetName: currentSheet, row: rowData })
       })
       .then(() => {
-        alert(`🎉 成功存入 [${currentSheet}] 囉！`);
+        alert(`已成功發送至 [${currentSheet}]`);
         inputs.forEach(input => input.value = "");
-        btn.innerText = "💖 儲存紀錄到試算表 🐾";
+        btn.innerText = "儲存紀錄";
         btn.disabled = false;
       })
       .catch(err => {
-        alert("🎉 已發送成功！");
+        alert("已發送成功");
         inputs.forEach(input => input.value = "");
-        btn.innerText = "💖 儲存紀錄到試算表 🐾";
+        btn.innerText = "儲存紀錄";
         btn.disabled = false;
       });
     }
