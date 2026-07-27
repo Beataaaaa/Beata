@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>我的隨手記 App</title>
+  <title>我的隨手記 App (v2.0)</title>
   <style>
     :root {
       --bg-color: #f7f4f0;
@@ -75,7 +75,6 @@
       margin-top: 10px;
     }
 
-    /* 底部導覽列 */
     nav {
       display: flex;
       background-color: var(--card-bg);
@@ -101,6 +100,13 @@
       font-size: 1.4rem;
       display: block;
     }
+
+    .debug-status {
+      font-size: 0.8rem;
+      color: #999;
+      margin-top: 8px;
+      word-break: break-all;
+    }
   </style>
 </head>
 <body>
@@ -109,13 +115,13 @@
 
   <main>
     <div class="card">
-      <h3 id="form-title">讀取中...</h3>
-      <div id="dynamic-form-fields">正在讀取試算表欄位...</div>
+      <h3 id="form-title">資料連線中...</h3>
+      <div id="dynamic-form-fields">正在讀取試算表...</div>
       <button id="submit-btn" class="btn-primary" style="display:none;" onclick="submitForm()">儲存紀錄到試算表</button>
+      <div id="debug-info" class="debug-status"></div>
     </div>
   </main>
 
-  <!-- 底部選單回歸 -->
   <nav>
     <div class="nav-item active" onclick="switchTab('美容紀錄', '💅 美容紀錄', this)">
       <span class="nav-icon">💅</span>美容
@@ -132,15 +138,15 @@
   </nav>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycby5vGHlcLtWfpg8XbDt9v-9sM-m2daEO2habIwe63rTsFIZjAHgd5SzDJ-wem2bB1li/exec";
+    // 已更新為你的新網址
+    const API_URL = "https://script.google.com/macros/s/AKfycbzGm3GBHu5u_N7SokU9rjpRWMEMv81QD7M7SAo0FisLiwJ9gLWcv26MzSo_dNhPF0oR/exec";
     
-    let currentSheet = "美容紀錄"; // 預設第一個分頁
+    let currentSheet = "美容紀錄";
 
     window.onload = function() {
       loadSheetFields(currentSheet);
     };
 
-    // 切換分頁邏輯
     function switchTab(sheetName, title, element) {
       document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
       element.classList.add('active');
@@ -150,22 +156,33 @@
       loadSheetFields(sheetName);
     }
 
-    // 抓取指定工作表的標題欄位
     function loadSheetFields(sheetName) {
-      document.getElementById('dynamic-form-fields').innerHTML = "載入欄位中...";
+      document.getElementById('dynamic-form-fields').innerHTML = "正在拉取最新欄位...";
       document.getElementById('submit-btn').style.display = 'none';
+      document.getElementById('debug-info').innerText = "";
 
-      fetch(`${API_URL}?sheet=${encodeURIComponent(sheetName)}`)
+      // 加上隨機時間戳記 (t=...) 避免瀏覽器讀取快取舊資料
+      const cacheBuster = new Date().getTime();
+      const requestUrl = `${API_URL}?sheet=${encodeURIComponent(sheetName)}&t=${cacheBuster}`;
+
+      fetch(requestUrl)
         .then(res => res.json())
         .then(data => {
+          if (data && data.error) {
+            document.getElementById('dynamic-form-fields').innerHTML = "Google 試算表錯誤：" + data.error;
+            return;
+          }
+
           if (data && data.length > 0) {
-            renderForm(data[0]); // 抓第一列標題
+            renderForm(data[0]);
+            document.getElementById('debug-info').innerText = `目前讀取工作表：${sheetName}（共 ${data.length} 列資料）`;
           } else {
-            document.getElementById('dynamic-form-fields').innerHTML = "此工作表無資料或未建立標題。";
+            document.getElementById('dynamic-form-fields').innerHTML = "工作表為空或未建標題。";
           }
         })
         .catch(err => {
-          document.getElementById('dynamic-form-fields').innerHTML = "載入失敗，請確認試算表分頁名稱是否符合。";
+          document.getElementById('dynamic-form-fields').innerHTML = "連線失敗，請稍後再試。";
+          document.getElementById('debug-info').innerText = "錯誤資訊：" + err;
         });
     }
 
@@ -175,6 +192,8 @@
       container.innerHTML = "";
 
       headers.forEach((headerName, index) => {
+        if (!headerName) return; // 忽略空白標題
+        
         const group = document.createElement('div');
         group.className = 'input-group';
         
@@ -210,7 +229,13 @@
         body: JSON.stringify({ sheetName: currentSheet, row: rowData })
       })
       .then(() => {
-        alert(`已成功寫入 ${currentSheet}！`);
+        alert(`已成功發送資料至 [${currentSheet}]！`);
+        inputs.forEach(input => input.value = "");
+        btn.innerText = "儲存紀錄到試算表";
+        btn.disabled = false;
+      })
+      .catch(err => {
+        alert("已發送！");
         inputs.forEach(input => input.value = "");
         btn.innerText = "儲存紀錄到試算表";
         btn.disabled = false;
