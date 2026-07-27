@@ -427,7 +427,7 @@
   <!-- 頂部 Header -->
   <header>
     <div class="brand-logo" onclick="showDashboard()">
-      <span>✦</span> Wander
+      <span>✦</span> TUNG WONDERLAND
     </div>
     <button id="back-btn" class="back-btn" onclick="showDashboard()">← Go Back</button>
     <!-- 照片 1：頭像 (input_file_11.png) -->
@@ -664,6 +664,13 @@
       const container = document.getElementById('dynamic-form-fields');
       container.innerHTML = "";
 
+      // 取得今天的日期字串 YYYY-MM-DD
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      const todayStr = `${year}-${month}-${day}`;
+
       headers.forEach((headerName) => {
         if (!headerName) return;
         
@@ -673,13 +680,68 @@
         const label = document.createElement('label');
         label.innerText = headerName;
         
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.placeholder = `輸入${headerName}...`;
-        input.className = 'field-input';
+        const lowerName = headerName.toLowerCase();
+        
+        // 判斷是否為「照片/圖片」欄位
+        if (lowerName.includes('照片') || lowerName.includes('圖片') || lowerName.includes('相片') || lowerName.includes('photo') || lowerName.includes('image')) {
+          const fileInput = document.createElement('input');
+          fileInput.type = 'file';
+          fileInput.accept = 'image/*';
+          fileInput.className = 'field-input-file';
+          
+          const hiddenInput = document.createElement('input');
+          hiddenInput.type = 'hidden';
+          hiddenInput.className = 'field-input';
+          
+          const previewImg = document.createElement('img');
+          previewImg.style.maxWidth = '100%';
+          previewImg.style.maxHeight = '200px';
+          previewImg.style.marginTop = '10px';
+          previewImg.style.borderRadius = '12px';
+          previewImg.style.display = 'none';
 
-        group.appendChild(label);
-        group.appendChild(input);
+          fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = function(evt) {
+                hiddenInput.value = evt.target.result; // 將 Base64 存入隱藏欄位
+                previewImg.src = evt.target.result;
+                previewImg.style.display = 'block';
+              };
+              reader.readAsDataURL(file);
+            } else {
+              hiddenInput.value = '';
+              previewImg.style.display = 'none';
+            }
+          });
+
+          group.appendChild(label);
+          group.appendChild(fileInput);
+          group.appendChild(hiddenInput);
+          group.appendChild(previewImg);
+
+        // 判斷是否為「日期」欄位
+        } else if (lowerName.includes('日期') || lowerName.includes('date')) {
+          const dateInput = document.createElement('input');
+          dateInput.type = 'date';
+          dateInput.className = 'field-input';
+          dateInput.value = todayStr; // 預設今天日期
+
+          group.appendChild(label);
+          group.appendChild(dateInput);
+
+        // 一般文字輸入欄位
+        } else {
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.placeholder = `輸入${headerName}...`;
+          input.className = 'field-input';
+
+          group.appendChild(label);
+          group.appendChild(input);
+        }
+
         container.appendChild(group);
       });
 
@@ -706,7 +768,15 @@
           
           const rowDiv = document.createElement('div');
           rowDiv.className = 'history-row';
-          rowDiv.innerHTML = `<span class="history-label">${headerName}</span><span class="history-val">${val}</span>`;
+          
+          if (val && (val.startsWith('data:image/') || val.startsWith('http') && (val.endsWith('.png') || val.endsWith('.jpg') || val.endsWith('.jpeg')))) {
+            rowDiv.style.flexDirection = 'column';
+            rowDiv.style.alignItems = 'flex-start';
+            rowDiv.style.gap = '8px';
+            rowDiv.innerHTML = `<span class="history-label">${headerName}</span><img src="${val}" style="max-width:100%; max-height:220px; border-radius:12px; border:1px solid var(--card-border);">`;
+          } else {
+            rowDiv.innerHTML = `<span class="history-label">${headerName}</span><span class="history-val">${val}</span>`;
+          }
           
           itemCard.appendChild(rowDiv);
         });
