@@ -161,9 +161,9 @@
 
   <main>
     <div class="card">
-      <h3 id="form-title">載入中...</h3>
+      <h3 id="form-title">讀取中...</h3>
       <div id="dynamic-form-fields" class="loading-box">
-        正在連線至 Google 試算表...
+        正在同步資料...
       </div>
       <button id="submit-btn" class="btn-primary" style="display:none;" onclick="submitForm()">儲存紀錄</button>
       <div id="debug-info" class="debug-status"></div>
@@ -215,15 +215,15 @@
         .then(res => res.json())
         .then(data => {
           if (data && data.error) {
-            document.getElementById('dynamic-form-fields').innerHTML = "試算表錯誤：" + data.error;
+            document.getElementById('dynamic-form-fields').innerHTML = "資料同步失敗：" + data.error;
             return;
           }
 
           if (data && data.length > 0) {
             renderForm(data[0]);
-            document.getElementById('debug-info').innerText = `已同步 [${sheetName}] 欄位`;
+            document.getElementById('debug-info').innerText = `已同步 [${sheetName}]`;
           } else {
-            document.getElementById('dynamic-form-fields').innerHTML = "未找到標題欄位";
+            document.getElementById('dynamic-form-fields').innerHTML = "未找到欄位設定";
           }
         })
         .catch(err => {
@@ -232,7 +232,8 @@
     }
 
     function renderForm(headers) {
-      document.getElementById('form-title').innerText = `填寫 [${currentSheet}]`;
+      // 標題寫法優化：優雅自然呈現
+      document.getElementById('form-title').innerText = `新增${currentSheet}`;
       const container = document.getElementById('dynamic-form-fields');
       container.innerHTML = "";
 
@@ -247,7 +248,7 @@
         
         const input = document.createElement('input');
         input.type = 'text';
-        input.placeholder = `請輸入${headerName}...`;
+        input.placeholder = `輸入${headerName}...`;
         input.className = 'field-input';
 
         group.appendChild(label);
@@ -274,13 +275,13 @@
         body: JSON.stringify({ sheetName: currentSheet, row: rowData })
       })
       .then(() => {
-        alert(`已成功發送至 [${currentSheet}]`);
+        alert("已成功發送紀錄");
         inputs.forEach(input => input.value = "");
         btn.innerText = "儲存紀錄";
         btn.disabled = false;
       })
       .catch(err => {
-        alert("已發送成功");
+        alert("已成功發送紀錄");
         inputs.forEach(input => input.value = "");
         btn.innerText = "儲存紀錄";
         btn.disabled = false;
