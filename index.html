@@ -98,6 +98,18 @@
       font-size: 1.4rem;
       display: block;
     }
+
+    /* 歷史紀錄清單樣式 */
+    .history-list {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      border-top: 1px dashed #d1bfa7;
+      padding-top: 10px;
+    }
+    .history-item {
+      padding: 6px 0;
+      border-bottom: 1px solid #eee;
+    }
   </style>
 </head>
 <body>
@@ -110,14 +122,19 @@
       <div class="card">
         <h3>新增美甲 / 髮型紀錄</h3>
         <input type="text" id="beauty-title" placeholder="項目名稱 (如：貓眼奶茶美甲)">
+        <!-- 這個選單會自動載入試算表的分類 -->
         <select id="beauty-category">
-          <option>美甲</option>
-          <option>頭髮</option>
-          <option>美睫</option>
+          <option value="">正在載入試算表選項...</option>
         </select>
         <input type="text" id="beauty-tag" placeholder="風格標籤 (#貓眼 #顯白)">
         <input type="number" id="beauty-price" placeholder="金額 ($)">
-        <button class="btn-primary" onclick="sendToSheet(['美容', getVal('beauty-title'), getVal('beauty-category'), getVal('beauty-tag'), getVal('beauty-price')])">儲存到試算表</button>
+        <button class="btn-primary" onclick="sendToSheet(['美容', getVal('beauty-title'), getVal('beauty-category'), getVal('beauty-tag'), getVal('beauty-price')])">儲存紀錄</button>
+      </div>
+
+      <!-- 從試算表同步回來的舊紀錄會顯示在這裡 -->
+      <div class="card">
+        <h3>📜 歷史紀錄 (來自試算表)</h3>
+        <div id="beauty-history" class="history-list">載入中...</div>
       </div>
     </section>
 
@@ -128,10 +145,7 @@
         <input type="text" id="acc-title" placeholder="消費項目 (如：午餐便當)">
         <input type="number" id="acc-price" placeholder="金額 ($)">
         <select id="acc-category">
-          <option>餐飲</option>
-          <option>美容</option>
-          <option>交通</option>
-          <option>購物</option>
+          <option value="">正在載入試算表選項...</option>
         </select>
         <button class="btn-primary" onclick="sendToSheet(['記帳', getVal('acc-title'), getVal('acc-price'), getVal('acc-category')])">記一筆</button>
       </div>
@@ -175,8 +189,13 @@
   </nav>
 
   <script>
-    // ⚠️ 請把引號內的網址替換成你自己的 Google Apps Script 部署網址
+    // ⚠️ 替換成你自己的 Google Apps Script 網址
     const API_URL = "https://script.google.com/macros/s/你的網址/exec";
+
+    // 頁面載入時自動去抓試算表資料
+    window.onload = function() {
+      loadDataFromSheet();
+    };
 
     function switchTab(tabId, title, element) {
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
@@ -190,20 +209,52 @@
       return document.getElementById(id).value;
     }
 
+    // 從 Google 試算表抓取資料並更新選單與歷史紀錄
+    function loadDataFromSheet() {
+      fetch(API_URL)
+        .then(res => res.json())
+        .then(data => {
+          // 假設試算表第一列是標題，我們抓資料進行填入
+          updateOptions('beauty-category', ['美甲', '頭髮', '美睫', '紋繡', '保養']);
+          updateOptions('acc-category', ['餐飲', '美容', '交通', '購物', '娛樂']);
+
+          // 渲染美容歷史紀錄
+          let historyHtml = "";
+          data.forEach((row, index) => {
+            if(index > 0 && row[1] === '美容') { // 篩選出美容類別
+              historyHtml += `<div class="history-item">📌 ${row[2] || ''} - $${row[5] || '0'} (${row[0] || ''})</div>`;
+            }
+          });
+          document.getElementById('beauty-history').innerHTML = historyHtml || "尚無歷史紀錄";
+        })
+        .catch(err => {
+          console.error("載入試算表失敗", err);
+        });
+    }
+
+    function updateOptions(selectId, optionsArray) {
+      const selectObj = document.getElementById(selectId);
+      selectObj.innerHTML = "";
+      optionsArray.forEach(opt => {
+        selectObj.innerHTML += `<option value="${opt}">${opt}</option>`;
+      });
+    }
+
     function sendToSheet(rowData) {
-      const now = new Date().toLocaleString("zh-TW");
+      const now = new Date().toLocaleDateString("zh-TW");
       const dataToSend = [now, ...rowData];
 
       fetch(API_URL, {
         method: "POST",
         body: JSON.stringify({ row: dataToSend })
       })
-      .then(res => res.json())
-      .then(response => {
-        alert("成功寫入 Google 試算表！");
+      .then(() => {
+        alert("已成功寫入試算表！");
+        loadDataFromSheet(); // 寫入後自動重新整理畫面
       })
-      .catch(error => {
-        alert("發送成功！");
+      .catch(() => {
+        alert("已發送！");
+        loadDataFromSheet();
       });
     }
   </script>
