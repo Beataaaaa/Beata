@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>美女 隨手記</title>
   
- <script>
+<script>
     /* =========================================================
        📸 在這裡填入你 Google Drive 5 張照片的 ID！
        (請確保圖片已開啟「知道連結的人皆可檢視」)
@@ -418,7 +418,6 @@
       transform: scale(1.02);
     }
 
-    /* 全螢幕燈箱大圖檢視 (Modal Lightbox) */
     .image-modal-overlay {
       position: fixed;
       top: 0;
@@ -458,6 +457,34 @@
       text-shadow: 0 2px 8px rgba(0,0,0,0.8);
     }
 
+    /* 高級毛玻璃風 Toast 提示通知 */
+    .custom-toast {
+      position: fixed;
+      top: -80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(20, 26, 32, 0.85);
+      border: 1px solid var(--accent-gold);
+      color: var(--text-white);
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(243, 168, 124, 0.3);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 2000;
+      transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .custom-toast.show {
+      top: 30px;
+    }
+
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
@@ -472,6 +499,11 @@
   </style>
 </head>
 <body>
+
+  <!-- 高級 Toast 提示通知元件 -->
+  <div id="custom-toast" class="custom-toast">
+    <span>✨</span> <span id="toast-msg">紀錄已成功發送！</span>
+  </div>
 
   <!-- 頂部 Header -->
   <header>
@@ -691,7 +723,6 @@
         });
     }
 
-    // 格式化日期時間（將 2026-07-26T16:00:00.000Z 轉成 2026-07-27）
     function formatDateValue(val) {
       if (!val) return '—';
       if (typeof val === 'string' && val.includes('T') && val.includes('Z')) {
@@ -824,6 +855,18 @@
       }
     }
 
+    // 顯示自訂的高質感 Toast 提示
+    function showToast(message) {
+      const toast = document.getElementById('custom-toast');
+      const toastMsg = document.getElementById('toast-msg');
+      toastMsg.innerText = message;
+      toast.classList.add('show');
+
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
     function submitForm() {
       const inputs = document.querySelectorAll('#detail-cards-wrapper .field-input');
       let rowData = [];
@@ -840,11 +883,11 @@
         body: JSON.stringify({ sheetName: currentSheet, row: rowData })
       })
       .then(() => {
-        alert("已成功發送紀錄！");
+        showToast("紀錄已成功發送！");
         loadSheetData(currentSheet);
       })
       .catch(err => {
-        alert("已成功發送紀錄！");
+        showToast("紀錄已成功發送！");
         loadSheetData(currentSheet);
       });
     }
@@ -869,7 +912,6 @@
       }
     }
 
-    /* 放大圖片彈窗 (Modal Lightbox) */
     function openImageModal(imgSrc) {
       const modal = document.getElementById('image-modal');
       const modalImg = document.getElementById('modal-img-content');
