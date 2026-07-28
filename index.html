@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>美女 隨手記</title>
   
-  <script>
+ <script>
     /* =========================================================
        📸 在這裡填入你 Google Drive 5 張照片的 ID！
        (請確保圖片已開啟「知道連結的人皆可檢視」)
@@ -18,10 +18,8 @@
       5: "16g5ebuSdfHSMbragn0mluNCPE3Ynu4t_"  // 全螢幕背景圖
     };
 
-    // 自動轉換為 CDN 直連網址
     function getImgUrl(id) {
       if (!id || id.startsWith("填入")) {
-        // 若尚未填寫 ID，預設載入預設圖片
         return "https://lh3.googleusercontent.com/d/16g5ebuSdfHSMbragn0mluNCPE3Ynu4t_";
       }
       return `https://lh3.googleusercontent.com/d/${id}`;
@@ -59,7 +57,6 @@
       background-attachment: fixed;
     }
 
-    /* 頂部 Header 區域 */
     header {
       padding: 20px 24px 10px;
       display: flex;
@@ -108,7 +105,6 @@
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
     }
 
-    /* 主區域 */
     main {
       flex: 1;
       display: flex;
@@ -218,7 +214,6 @@
       font-weight: 600;
       color: rgba(255, 255, 255, 0.9);
       line-height: 1.3;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.6);
     }
 
     .wander-card[data-pos="0"] {
@@ -413,6 +408,61 @@
       color: var(--text-white);
     }
 
+    .clickable-img {
+      cursor: zoom-in;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .clickable-img:hover {
+      opacity: 0.9;
+      transform: scale(1.02);
+    }
+
+    /* 全螢幕燈箱大圖檢視 (Modal Lightbox) */
+    .image-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(10, 14, 18, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 1000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      cursor: zoom-out;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    .image-modal-overlay img {
+      max-width: 95%;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .image-modal-close {
+      position: absolute;
+      top: 24px;
+      right: 28px;
+      color: var(--text-white);
+      font-size: 2rem;
+      font-weight: 300;
+      cursor: pointer;
+      line-height: 1;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
     .loading-box {
       text-align: center;
       padding: 30px;
@@ -429,7 +479,6 @@
       <span>✦</span> TUNG WONDERLAND
     </div>
     <button id="back-btn" class="back-btn" onclick="showDashboard()">← Go Back</button>
-    <!-- 頂部頭像照片 (對應 1 號) -->
     <img id="avatar-img" class="avatar-img" alt="Avatar">
   </header>
 
@@ -440,7 +489,7 @@
         
         <div class="nav-arrow left" onclick="prevMainCard()">‹</div>
 
-        <!-- 卡片 1: BEAUTY (美容) -->
+        <!-- 卡片 1: BEAUTY -->
         <div class="wander-card" data-index="0" data-pos="0" onclick="cardClick(0, '美容紀錄')">
           <img id="card-img-1" class="wander-card-bg" alt="BEAUTY">
           <div class="wander-card-overlay">
@@ -452,7 +501,7 @@
           </div>
         </div>
 
-        <!-- 卡片 2: BOOKKEEPING (記帳) -->
+        <!-- 卡片 2: BOOKKEEPING -->
         <div class="wander-card" data-index="1" data-pos="1" onclick="cardClick(1, '日常記帳')">
           <img id="card-img-2" class="wander-card-bg" alt="FINANCE">
           <div class="wander-card-overlay">
@@ -464,7 +513,7 @@
           </div>
         </div>
 
-        <!-- 卡片 3: DAILY (雜記) -->
+        <!-- 卡片 3: DAILY -->
         <div class="wander-card" data-index="2" data-pos="2" onclick="cardClick(2, '隨手雜記')">
           <img id="card-img-3" class="wander-card-bg" alt="JOURNAL">
           <div class="wander-card-overlay">
@@ -476,7 +525,7 @@
           </div>
         </div>
 
-        <!-- 卡片 4: HEALTH (減肥) -->
+        <!-- 卡片 4: HEALTH -->
         <div class="wander-card" data-index="3" data-pos="-1" onclick="cardClick(3, '減肥紀錄')">
           <img id="card-img-4" class="wander-card-bg" alt="HEALTH">
           <div class="wander-card-overlay">
@@ -496,7 +545,6 @@
     <!-- 內頁 (內頁 3D 卡片輪播) -->
     <div id="detail-page" style="display: none; width: 100%;">
       <div class="carousel-container">
-        
         <div class="nav-arrow left" onclick="prevDetailCard()">‹</div>
 
         <!-- 動態生成的 3D 卡片容器 -->
@@ -504,7 +552,6 @@
         </div>
 
         <div class="nav-arrow right" onclick="nextDetailCard()">›</div>
-
       </div>
     </div>
   </main>
@@ -514,20 +561,21 @@
     <div class="copyright-text">
       © TUNG WONDERLAND<br>All Rights Reserved
     </div>
-    <div class="dots-indicator" id="dots-container">
-    </div>
+    <div class="dots-indicator" id="dots-container"></div>
     <div class="swipe-pill" id="swipe-btn" onclick="handleSwipeBtn()">
       Swipe <span>»</span>
     </div>
   </div>
 
+  <!-- 照片全螢幕放大 Modal 燈箱 -->
+  <div id="image-modal" class="image-modal-overlay" onclick="closeImageModal()">
+    <span class="image-modal-close">&times;</span>
+    <img id="modal-img-content" src="" alt="Zoomed Photo">
+  </div>
+
   <script>
-    // 初始化圖片載入
     document.addEventListener("DOMContentLoaded", function() {
-      // 設置全螢幕背景 (第 5 張照片)
       document.body.style.backgroundImage = `radial-gradient(rgba(15, 19, 23, 0.55), rgba(8, 10, 14, 0.88)), url('${getImgUrl(DRIVE_IDS[5])}')`;
-      
-      // 設置頂部頭像與卡片背景照片 (1~4 號)
       document.getElementById('avatar-img').src = getImgUrl(DRIVE_IDS[1]);
       document.getElementById('card-img-1').src = getImgUrl(DRIVE_IDS[1]);
       document.getElementById('card-img-2').src = getImgUrl(DRIVE_IDS[2]);
@@ -643,6 +691,18 @@
         });
     }
 
+    // 格式化日期時間（將 2026-07-26T16:00:00.000Z 轉成 2026-07-27）
+    function formatDateValue(val) {
+      if (!val) return '—';
+      if (typeof val === 'string' && val.includes('T') && val.includes('Z')) {
+        const d = new Date(val);
+        if (!isNaN(d.getTime())) {
+          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+      }
+      return val;
+    }
+
     function buildDetailCards(headers, rows) {
       const container = document.getElementById('detail-cards-wrapper');
       container.innerHTML = "";
@@ -650,6 +710,7 @@
       const historyRows = [...rows].reverse();
       totalDetailCards = 1 + historyRows.length;
 
+      // 1. 新增表單卡片
       const formCard = document.createElement('div');
       formCard.className = 'wander-card';
       
@@ -699,6 +760,7 @@
       formCard.innerHTML = formCardHtml;
       container.appendChild(formCard);
 
+      // 2. 歷史紀錄卡片
       historyRows.forEach((row, rIdx) => {
         const histCard = document.createElement('div');
         histCard.className = 'wander-card';
@@ -710,20 +772,23 @@
 
         headers.forEach((headerName, hIdx) => {
           if (!headerName) return;
-          const val = row[hIdx] || '—';
+          let val = row[hIdx];
+          val = formatDateValue(val);
 
-          if (val && (val.startsWith('data:image/') || (val.startsWith('http') && (val.endsWith('.png') || val.endsWith('.jpg') || val.endsWith('.jpeg'))))) {
+          const isImage = val && typeof val === 'string' && (val.startsWith('data:image/') || val.startsWith('http'));
+
+          if (isImage) {
             histHtml += `
-              <div style="margin-bottom: 10px;">
+              <div style="margin-bottom: 12px;">
                 <span class="history-item-label">${headerName}</span>
-                <img src="${val}" style="max-width:100%; max-height:160px; border-radius:12px; margin-top:6px; border:1px solid var(--card-border);">
+                <img src="${val}" class="clickable-img" onclick="openImageModal('${val}')" style="max-width:100%; max-height:170px; border-radius:12px; margin-top:6px; border:1px solid var(--card-border); display:block;">
               </div>
             `;
           } else {
             histHtml += `
               <div class="history-row-item">
                 <span class="history-item-label">${headerName}</span>
-                <span class="history-item-val">${val}</span>
+                <span class="history-item-val">${val || '—'}</span>
               </div>
             `;
           }
@@ -802,6 +867,19 @@
       } else {
         nextMainCard();
       }
+    }
+
+    /* 放大圖片彈窗 (Modal Lightbox) */
+    function openImageModal(imgSrc) {
+      const modal = document.getElementById('image-modal');
+      const modalImg = document.getElementById('modal-img-content');
+      modalImg.src = imgSrc;
+      modal.style.display = 'flex';
+    }
+
+    function closeImageModal() {
+      const modal = document.getElementById('image-modal');
+      modal.style.display = 'none';
     }
 
     updateMainCarousel();
