@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>美女 隨手記</title>
   
-  <script>
+<script>
     /* =========================================================
        📸 在這裡填入你 Google Drive 5 張照片的 ID！
        (請確保圖片已開啟「知道連結的人皆可檢視」)
@@ -15,7 +15,8 @@
       2: "1K6rjSKbiKtnejhKiJSAvEHL2uWdKm_Cd", // 日常記帳 (BOOKKEEPING)
       3: "1B-Lz0YO1xg1XPWdhBpm615MXx_GQt_6J",              // 隨手雜記 (DAILY)
       4: "1Y5TMD9Qgxcy6OAcqXWu2ODOU9I_OhRjN",              // 減肥紀錄 (HEALTH)
-      5: "16g5ebuSdfHSMbragn0mluNCPE3Ynu4t_"  // 全螢幕背景圖
+      6: "146wYE0JqaUEfT_bPVjg-5TVAED1Z0tHe",            // 月度總覽 (STATS) -> 第5張卡片
+      7: "16g5ebuSdfHSMbragn0mluNCPE3Ynu4t_"  // 全螢幕背景圖
     };
 
     function getImgUrl(id) {
@@ -224,6 +225,7 @@
       line-height: 1.3;
     }
 
+    /* 5 張卡片 3D 位置 */
     .wander-card[data-pos="0"] {
       transform: translate3d(0, 0, 0) scale(1);
       z-index: 5;
@@ -231,25 +233,32 @@
       filter: brightness(1);
     }
 
-    .wander-card[data-pos="-1"] {
-      transform: translate3d(-200px, 0, -100px) scale(0.82) rotateY(12deg);
-      z-index: 3;
-      opacity: 0.6;
-      filter: brightness(0.75);
-    }
-
     .wander-card[data-pos="1"] {
-      transform: translate3d(200px, 0, -100px) scale(0.82) rotateY(-12deg);
+      transform: translate3d(190px, 0, -100px) scale(0.82) rotateY(-12deg);
       z-index: 3;
-      opacity: 0.6;
+      opacity: 0.65;
       filter: brightness(0.75);
     }
 
-    .wander-card[data-pos="2"], .wander-card[data-pos="-2"] {
-      transform: translate3d(0, 0, -200px) scale(0.7);
+    .wander-card[data-pos="-1"] {
+      transform: translate3d(-190px, 0, -100px) scale(0.82) rotateY(12deg);
+      z-index: 3;
+      opacity: 0.65;
+      filter: brightness(0.75);
+    }
+
+    .wander-card[data-pos="2"] {
+      transform: translate3d(320px, 0, -200px) scale(0.68) rotateY(-20deg);
       z-index: 1;
-      opacity: 0;
-      pointer-events: none;
+      opacity: 0.3;
+      filter: brightness(0.5);
+    }
+
+    .wander-card[data-pos="-2"] {
+      transform: translate3d(-320px, 0, -200px) scale(0.68) rotateY(20deg);
+      z-index: 1;
+      opacity: 0.3;
+      filter: brightness(0.5);
     }
 
     .nav-arrow {
@@ -416,13 +425,12 @@
       color: var(--text-white);
     }
 
-    /* 月度統計專用卡片樣式 */
     .summary-box {
       background: rgba(18, 22, 25, 0.6);
       border: 1px solid var(--card-border);
       border-radius: 16px;
-      padding: 12px 16px;
-      margin-bottom: 10px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -435,7 +443,7 @@
     }
 
     .summary-total {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 900;
       color: var(--accent-green);
     }
@@ -546,7 +554,7 @@
   </header>
 
   <main>
-    <!-- 主畫面 (主 3D 輪播) -->
+    <!-- 主畫面 (主 5 張 3D 輪播) -->
     <div id="dashboard" style="display: block; width: 100%;">
       <div class="carousel-container">
         
@@ -589,13 +597,25 @@
         </div>
 
         <!-- 卡片 4: HEALTH -->
-        <div class="wander-card" data-index="3" data-pos="-1" onclick="cardClick(3, '減肥紀錄')">
+        <div class="wander-card" data-index="3" data-pos="-2" onclick="cardClick(3, '減肥紀錄')">
           <img id="card-img-4" class="wander-card-bg" alt="HEALTH" decoding="async">
           <div class="wander-card-overlay">
             <div class="wander-card-header"><span>✦</span> TUNG WONDERLAND</div>
             <div class="wander-card-text-box">
               <div class="wander-card-title">HEALTH</div>
               <div class="wander-card-subtitle">準備變身大美女 💪✨</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 卡片 5: MONTHLY STATS (月度總覽：帶入 6 號照片) -->
+        <div class="wander-card" data-index="4" data-pos="-1" onclick="cardClick(4, '月度總覽')">
+          <img id="card-img-6" class="wander-card-bg" alt="STATS" decoding="async">
+          <div class="wander-card-overlay">
+            <div class="wander-card-header"><span>✦</span> TUNG WONDERLAND</div>
+            <div class="wander-card-text-box">
+              <div class="wander-card-title">STATS</div>
+              <div class="wander-card-subtitle">每月記帳費用統計 📊💰</div>
             </div>
           </div>
         </div>
@@ -638,19 +658,23 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      document.body.style.backgroundImage = `radial-gradient(rgba(15, 19, 23, 0.55), rgba(8, 10, 14, 0.88)), url('${getImgUrl(DRIVE_IDS[5])}')`;
+      // 7 號圖作全螢幕背景
+      document.body.style.backgroundImage = `radial-gradient(rgba(15, 19, 23, 0.55), rgba(8, 10, 14, 0.88)), url('${getImgUrl(DRIVE_IDS[7])}')`;
+      
       document.getElementById('avatar-img').src = getImgUrl(DRIVE_IDS[1]);
       document.getElementById('card-img-1').src = getImgUrl(DRIVE_IDS[1]);
       document.getElementById('card-img-2').src = getImgUrl(DRIVE_IDS[2]);
       document.getElementById('card-img-3').src = getImgUrl(DRIVE_IDS[3]);
       document.getElementById('card-img-4').src = getImgUrl(DRIVE_IDS[4]);
+      // 6 號圖帶入第五張卡片 (STATS)
+      document.getElementById('card-img-6').src = getImgUrl(DRIVE_IDS[6]);
     });
 
     const API_URL = "https://script.google.com/macros/s/AKfycbzGm3GBHu5u_N7SokU9rjpRWMEMv81QD7M7SAo0FisLiwJ9gLWcv26MzSo_dNhPF0oR/exec";
     
     let currentSheet = "";
     let mainIndex = 0;
-    const totalMainCards = 4;
+    const totalMainCards = 5;
 
     let isDetailPage = false;
     let detailIndex = 0;
@@ -660,9 +684,8 @@
       const cards = document.querySelectorAll('#dashboard .wander-card');
       cards.forEach((card, i) => {
         let pos = i - mainIndex;
-        if (pos < -1) pos += totalMainCards;
+        if (pos < -2) pos += totalMainCards;
         if (pos > 2) pos -= totalMainCards;
-        if (pos === 3) pos = -1;
         card.setAttribute('data-pos', pos);
       });
       renderDots(totalMainCards, mainIndex);
@@ -725,7 +748,8 @@
       document.getElementById('detail-page').style.display = 'block';
       document.getElementById('back-btn').style.display = 'block';
 
-      loadSheetData(sheetName);
+      const fetchSheet = (sheetName === '月度總覽') ? '日常記帳' : sheetName;
+      loadSheetData(fetchSheet);
     }
 
     function loadSheetData(sheetName) {
@@ -744,7 +768,11 @@
           }
 
           if (data && data.length > 0) {
-            buildDetailCards(data[0], data.slice(1));
+            if (currentSheet === '月度總覽') {
+              buildStatsCardOnly(data[0], data.slice(1));
+            } else {
+              buildDetailCards(data[0], data.slice(1));
+            }
           } else {
             container.innerHTML = `<div class="loading-box">未取得試算表欄位設定</div>`;
           }
@@ -765,9 +793,7 @@
       return val;
     }
 
-    // 自動計算「日常記帳」的各月總支出
     function calculateMonthlySummary(headers, rows) {
-      // 找出「日期」與「金額」對應的欄位索引
       let dateIdx = -1;
       let amountIdx = -1;
 
@@ -784,7 +810,7 @@
 
       if (dateIdx === -1 || amountIdx === -1) return null;
 
-      const monthlyTotals = {}; // 儲存 { '2026-07': 1500, '2026-06': 2300 }
+      const monthlyTotals = {};
 
       rows.forEach(row => {
         const rawDate = row[dateIdx];
@@ -792,8 +818,7 @@
         const rawAmount = row[amountIdx];
 
         if (formattedDate && formattedDate !== '—') {
-          // 抓取 YYYY-MM
-          const monthKey = formattedDate.substring(0, 7); 
+          const monthKey = formattedDate.substring(0, 7);
           const numAmount = parseFloat(String(rawAmount).replace(/[^0-9.-]+/g, "")) || 0;
 
           if (monthKey.length === 7) {
@@ -805,19 +830,50 @@
       return monthlyTotals;
     }
 
+    function buildStatsCardOnly(headers, rows) {
+      const container = document.getElementById('detail-cards-wrapper');
+      container.innerHTML = "";
+
+      totalDetailCards = 1;
+
+      const summaryTotals = calculateMonthlySummary(headers, rows);
+      const summaryCard = document.createElement('div');
+      summaryCard.className = 'wander-card';
+
+      let summaryHtml = `
+        <div class="inner-card-title">📊 記帳月度總覽統計</div>
+        <div class="inner-card-body">
+      `;
+
+      if (summaryTotals && Object.keys(summaryTotals).length > 0) {
+        const sortedMonths = Object.keys(summaryTotals).sort().reverse();
+        sortedMonths.forEach(m => {
+          const formattedTotal = summaryTotals[m].toLocaleString('zh-TW', { style: 'currency', currency: 'TWD', minimumFractionDigits: 0 });
+          summaryHtml += `
+            <div class="summary-box">
+              <span class="summary-month">📅 ${m}</span>
+              <span class="summary-total">${formattedTotal}</span>
+            </div>
+          `;
+        });
+      } else {
+        summaryHtml += `<div class="loading-box">尚無可統計的記帳金額資料</div>`;
+      }
+
+      summaryHtml += `</div>`;
+      summaryCard.innerHTML = summaryHtml;
+      container.appendChild(summaryCard);
+
+      updateDetailCarousel();
+    }
+
     function buildDetailCards(headers, rows) {
       const container = document.getElementById('detail-cards-wrapper');
       container.innerHTML = "";
 
       const historyRows = [...rows].reverse();
+      totalDetailCards = 1 + historyRows.length;
 
-      // 判斷是否為「日常記帳」，如果是，就多插入一張「月度統計卡片」
-      const isBookkeeping = (currentSheet === '日常記帳');
-      const hasSummaryCard = isBookkeeping;
-
-      totalDetailCards = 1 + (hasSummaryCard ? 1 : 0) + historyRows.length;
-
-      // --- 1. 新增表單卡片 ---
       const formCard = document.createElement('div');
       formCard.className = 'wander-card';
       
@@ -867,42 +923,6 @@
       formCard.innerHTML = formCardHtml;
       container.appendChild(formCard);
 
-      // --- 2. 專屬：月度統計卡片 (僅日常記帳顯示) ---
-      if (hasSummaryCard) {
-        const summaryTotals = calculateMonthlySummary(headers, rows);
-        const summaryCard = document.createElement('div');
-        summaryCard.className = 'wander-card';
-
-        let summaryHtml = `
-          <div class="inner-card-title">📊 每月支出總計</div>
-          <div class="inner-card-body">
-        `;
-
-        if (summaryTotals && Object.keys(summaryTotals).length > 0) {
-          // 依月份降序排列
-          const sortedMonths = Object.keys(summaryTotals).sort().reverse();
-          sortedMonths.forEach(m => {
-            const formattedTotal = summaryTotals[m].toLocaleString('zh-TW', { style: 'currency', currency: 'TWD', minimumFractionDigits: 0 });
-            summaryHtml += `
-              <div class="summary-box">
-                <span class="summary-month">📅 ${m}</span>
-                <span class="summary-total">${formattedTotal}</span>
-              </div>
-            `;
-          });
-        } else {
-          summaryHtml += `<div class="loading-box">尚無可統計的月度金額資料</div>`;
-        }
-
-        summaryHtml += `</div>
-          <div style="text-align:center; font-size:0.75rem; color:var(--text-dim);">← 左滑新增 / 右滑明細</div>
-        `;
-
-        summaryCard.innerHTML = summaryHtml;
-        container.appendChild(summaryCard);
-      }
-
-      // --- 3. 歷史紀錄卡片 ---
       historyRows.forEach((row, rIdx) => {
         const histCard = document.createElement('div');
         histCard.className = 'wander-card';
@@ -937,7 +957,7 @@
         });
 
         histHtml += `</div>
-          <div style="text-align:center; font-size:0.75rem; color:var(--text-dim);">← 左滑看統計 / 右滑更多歷史</div>
+          <div style="text-align:center; font-size:0.75rem; color:var(--text-dim);">← 左滑新增 / 右滑更多歷史</div>
         `;
 
         histCard.innerHTML = histHtml;
