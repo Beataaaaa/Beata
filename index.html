@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>美女 隨手記</title>
   
-<script>
+  <script>
     /* =========================================================
        📸 在這裡填入你 Google Drive 5 張照片的 ID！
        (請確保圖片已開啟「知道連結的人皆可檢視」)
@@ -17,13 +17,19 @@
       4: "1Y5TMD9Qgxcy6OAcqXWu2ODOU9I_OhRjN",              // 減肥紀錄 (HEALTH)
       5: "16g5ebuSdfHSMbragn0mluNCPE3Ynu4t_"  // 全螢幕背景圖
     };
-
     function getImgUrl(id) {
       if (!id || id.startsWith("填入")) {
         return "https://lh3.googleusercontent.com/d/16g5ebuSdfHSMbragn0mluNCPE3Ynu4t_";
       }
+      if (id.startsWith("http")) return id; // 支援外部圖床網址
       return `https://lh3.googleusercontent.com/d/${id}`;
     }
+
+    // 🚀 JS 圖片預載（在頁面載入前先將圖片打入快取）
+    Object.values(DRIVE_IDS).forEach(id => {
+      const img = new Image();
+      img.src = getImgUrl(id);
+    });
   </script>
 
   <style>
@@ -55,6 +61,7 @@
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
+      transition: background-image 0.3s ease-in-out;
     }
 
     header {
@@ -457,7 +464,6 @@
       text-shadow: 0 2px 8px rgba(0,0,0,0.8);
     }
 
-    /* 高級毛玻璃風 Toast 提示通知 */
     .custom-toast {
       position: fixed;
       top: -80px;
@@ -511,7 +517,7 @@
       <span>✦</span> TUNG WONDERLAND
     </div>
     <button id="back-btn" class="back-btn" onclick="showDashboard()">← Go Back</button>
-    <img id="avatar-img" class="avatar-img" alt="Avatar">
+    <img id="avatar-img" class="avatar-img" alt="Avatar" decoding="async">
   </header>
 
   <main>
@@ -523,7 +529,7 @@
 
         <!-- 卡片 1: BEAUTY -->
         <div class="wander-card" data-index="0" data-pos="0" onclick="cardClick(0, '美容紀錄')">
-          <img id="card-img-1" class="wander-card-bg" alt="BEAUTY">
+          <img id="card-img-1" class="wander-card-bg" alt="BEAUTY" decoding="async">
           <div class="wander-card-overlay">
             <div class="wander-card-header"><span>✦</span> TUNG WONDERLAND</div>
             <div class="wander-card-text-box">
@@ -535,7 +541,7 @@
 
         <!-- 卡片 2: BOOKKEEPING -->
         <div class="wander-card" data-index="1" data-pos="1" onclick="cardClick(1, '日常記帳')">
-          <img id="card-img-2" class="wander-card-bg" alt="FINANCE">
+          <img id="card-img-2" class="wander-card-bg" alt="FINANCE" decoding="async">
           <div class="wander-card-overlay">
             <div class="wander-card-header"><span>✦</span> TUNG WONDERLAND</div>
             <div class="wander-card-text-box">
@@ -547,7 +553,7 @@
 
         <!-- 卡片 3: DAILY -->
         <div class="wander-card" data-index="2" data-pos="2" onclick="cardClick(2, '隨手雜記')">
-          <img id="card-img-3" class="wander-card-bg" alt="JOURNAL">
+          <img id="card-img-3" class="wander-card-bg" alt="JOURNAL" decoding="async">
           <div class="wander-card-overlay">
             <div class="wander-card-header"><span>✦</span> TUNG WONDERLAND</div>
             <div class="wander-card-text-box">
@@ -559,7 +565,7 @@
 
         <!-- 卡片 4: HEALTH -->
         <div class="wander-card" data-index="3" data-pos="-1" onclick="cardClick(3, '減肥紀錄')">
-          <img id="card-img-4" class="wander-card-bg" alt="HEALTH">
+          <img id="card-img-4" class="wander-card-bg" alt="HEALTH" decoding="async">
           <div class="wander-card-overlay">
             <div class="wander-card-header"><span>✦</span> TUNG WONDERLAND</div>
             <div class="wander-card-text-box">
@@ -812,7 +818,7 @@
             histHtml += `
               <div style="margin-bottom: 12px;">
                 <span class="history-item-label">${headerName}</span>
-                <img src="${val}" class="clickable-img" onclick="openImageModal('${val}')" style="max-width:100%; max-height:170px; border-radius:12px; margin-top:6px; border:1px solid var(--card-border); display:block;">
+                <img src="${val}" class="clickable-img" onclick="openImageModal('${val}')" style="max-width:100%; max-height:170px; border-radius:12px; margin-top:6px; border:1px solid var(--card-border); display:block;" decoding="async">
               </div>
             `;
           } else {
@@ -855,7 +861,6 @@
       }
     }
 
-    // 顯示自訂的高質感 Toast 提示
     function showToast(message) {
       const toast = document.getElementById('custom-toast');
       const toastMsg = document.getElementById('toast-msg');
