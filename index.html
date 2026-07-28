@@ -30,7 +30,8 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      background-image: radial-gradient(rgba(15, 19, 23, 0.55), rgba(8, 10, 14, 0.88)), url('5.jpg');
+      /* 背景圖使用第 5 張照片 (ID: 16g5ebuSdfHSMbragn0mluNCPE3Ynu4t_) */
+      background-image: radial-gradient(rgba(15, 19, 23, 0.55), rgba(8, 10, 14, 0.88)), url('https://lh3.googleusercontent.com/d/16g5ebuSdfHSMbragn0mluNCPE3Ynu4t_');
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
@@ -96,7 +97,6 @@
       padding-bottom: 70px;
     }
 
-    /* 3D 堆疊卡片輪播 Container (首頁與內頁共用樣式) */
     .carousel-container {
       position: relative;
       width: 100%;
@@ -107,7 +107,6 @@
       perspective: 1000px;
     }
 
-    /* 卡片共通樣式 */
     .wander-card {
       position: absolute;
       width: 310px;
@@ -128,7 +127,6 @@
       -webkit-backdrop-filter: blur(20px);
     }
 
-    /* 首頁卡片的底圖 */
     .wander-card-bg {
       position: absolute;
       top: 0;
@@ -201,7 +199,6 @@
       text-shadow: 0 1px 4px rgba(0,0,0,0.6);
     }
 
-    /* 卡片 3D 位置與透視狀態 */
     .wander-card[data-pos="0"] {
       transform: translate3d(0, 0, 0) scale(1);
       z-index: 5;
@@ -230,7 +227,6 @@
       pointer-events: none;
     }
 
-    /* 兩側切換箭頭按鈕 */
     .nav-arrow {
       position: absolute;
       top: 50%;
@@ -259,7 +255,6 @@
     .nav-arrow.left { left: 16px; }
     .nav-arrow.right { right: 16px; }
 
-    /* 底部控制器列 */
     .bottom-bar {
       position: fixed;
       bottom: 20px;
@@ -313,7 +308,6 @@
       cursor: pointer;
     }
 
-    /* 內頁卡片內部的樣式 */
     .inner-card-title {
       color: var(--accent-gold);
       font-size: 1.1rem;
@@ -329,7 +323,6 @@
       padding-right: 4px;
     }
 
-    /* 自訂捲軸樣式 */
     .inner-card-body::-webkit-scrollbar {
       width: 4px;
     }
@@ -414,7 +407,8 @@
       <span>✦</span> TUNG WONDERLAND
     </div>
     <button id="back-btn" class="back-btn" onclick="showDashboard()">← Go Back</button>
-    <img src="1.jpg" class="avatar-img" alt="Avatar">
+    <!-- 頂部頭像照片 -->
+    <img src="https://lh3.googleusercontent.com/d/16g5ebuSdfHSMbragn0mluNCPE3Ynu4t_" class="avatar-img" alt="Avatar">
   </header>
 
   <main>
@@ -424,9 +418,9 @@
         
         <div class="nav-arrow left" onclick="prevMainCard()">‹</div>
 
-        <!-- 卡片 1: BEAUTY -->
+        <!-- 卡片 1: BEAUTY (美容) -->
         <div class="wander-card" data-index="0" data-pos="0" onclick="cardClick(0, '美容紀錄')">
-          <img src="1.jpg" class="wander-card-bg" alt="BEAUTY">
+          <img src="https://lh3.googleusercontent.com/d/16g5ebuSdfHSMbragn0mluNCPE3Ynu4t_" class="wander-card-bg" alt="BEAUTY">
           <div class="wander-card-overlay">
             <div class="wander-card-header"><span>✦</span> TUNG WONDERLAND</div>
             <div class="wander-card-text-box">
@@ -436,9 +430,9 @@
           </div>
         </div>
 
-        <!-- 卡片 2: BOOKKEEPING -->
+        <!-- 卡片 2: BOOKKEEPING (記帳) -->
         <div class="wander-card" data-index="1" data-pos="1" onclick="cardClick(1, '日常記帳')">
-          <img src="2.jpg" class="wander-card-bg" alt="FINANCE">
+          <img src="https://lh3.googleusercontent.com/d/16g5ebuSdfHSMbragn0mluNCPE3Ynu4t_" class="wander-card-bg" alt="FINANCE">
           <div class="wander-card-overlay">
             <div class="wander-card-header"><span>✦</span> TUNG WONDERLAND</div>
             <div class="wander-card-text-box">
@@ -448,9 +442,9 @@
           </div>
         </div>
 
-        <!-- 卡片 3: DAILY -->
+        <!-- 卡片 3: DAILY (雜記) -->
         <div class="wander-card" data-index="2" data-pos="2" onclick="cardClick(2, '隨手雜記')">
-          <img src="3.jpg" class="wander-card-bg" alt="JOURNAL">
+          <img src="https://lh3.googleusercontent.com/d/16g5ebuSdfHSMbragn0mluNCPE3Ynu4t_" class="wander-card-bg" alt="JOURNAL">
           <div class="wander-card-overlay">
             <div class="wander-card-header"><span>✦</span> TUNG WONDERLAND</div>
             <div class="wander-card-text-box">
@@ -460,9 +454,9 @@
           </div>
         </div>
 
-        <!-- 卡片 4: HEALTH -->
+        <!-- 卡片 4: HEALTH (減肥) -->
         <div class="wander-card" data-index="3" data-pos="-1" onclick="cardClick(3, '減肥紀錄')">
-          <img src="4.jpg" class="wander-card-bg" alt="HEALTH">
+          <img src="https://lh3.googleusercontent.com/d/16g5ebuSdfHSMbragn0mluNCPE3Ynu4t_" class="wander-card-bg" alt="HEALTH">
           <div class="wander-card-overlay">
             <div class="wander-card-header"><span>✦</span> TUNG WONDERLAND</div>
             <div class="wander-card-text-box">
@@ -483,9 +477,8 @@
         
         <div class="nav-arrow left" onclick="prevDetailCard()">‹</div>
 
-        <!-- 動態生成的 3D 卡片容器 (第一個卡片為新增表單，後續為歷史紀錄) -->
+        <!-- 動態生成的 3D 卡片容器 -->
         <div id="detail-cards-wrapper" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative;">
-          <!-- JS 動態插入內頁卡片 -->
         </div>
 
         <div class="nav-arrow right" onclick="nextDetailCard()">›</div>
@@ -500,7 +493,6 @@
       © TUNG WONDERLAND<br>All Rights Reserved
     </div>
     <div class="dots-indicator" id="dots-container">
-      <!-- 動態呈現指示點 -->
     </div>
     <div class="swipe-pill" id="swipe-btn" onclick="handleSwipeBtn()">
       Swipe <span>»</span>
@@ -510,17 +502,14 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzGm3GBHu5u_N7SokU9rjpRWMEMv81QD7M7SAo0FisLiwJ9gLWcv26MzSo_dNhPF0oR/exec";
     
-    // 主畫面狀態
     let currentSheet = "";
     let mainIndex = 0;
     const totalMainCards = 4;
 
-    // 內頁狀態
     let isDetailPage = false;
     let detailIndex = 0;
     let totalDetailCards = 1;
 
-    /* ================= 主畫面輪播邏輯 ================= */
     function updateMainCarousel() {
       const cards = document.querySelectorAll('#dashboard .wander-card');
       cards.forEach((card, i) => {
@@ -552,7 +541,6 @@
       }
     }
 
-    /* ================= 內頁輪播邏輯 ================= */
     function updateDetailCarousel() {
       const cards = document.querySelectorAll('#detail-cards-wrapper .wander-card');
       cards.forEach((card, i) => {
@@ -574,7 +562,6 @@
       updateDetailCarousel();
     }
 
-    /* ================= 頁面切換與 API 讀取 ================= */
     function showDashboard() {
       isDetailPage = false;
       document.getElementById('dashboard').style.display = 'block';
@@ -586,7 +573,7 @@
     function openDetail(sheetName) {
       currentSheet = sheetName;
       isDetailPage = true;
-      detailIndex = 0; // 重置預設看第一個卡片（新增紀錄）
+      detailIndex = 0;
 
       document.getElementById('dashboard').style.display = 'none';
       document.getElementById('detail-page').style.display = 'block';
@@ -621,15 +608,13 @@
         });
     }
 
-    // 建立內頁的卡片 (Card 0: 新增表單, Card 1~N: 歷史紀錄)
     function buildDetailCards(headers, rows) {
       const container = document.getElementById('detail-cards-wrapper');
       container.innerHTML = "";
 
-      const historyRows = [...rows].reverse(); // 歷史紀錄倒序（最新最前）
-      totalDetailCards = 1 + historyRows.length; // 1張表單 + N張歷史紀錄
+      const historyRows = [...rows].reverse();
+      totalDetailCards = 1 + historyRows.length;
 
-      // --- 1. 建立第一個卡片：新增紀錄表單卡片 ---
       const formCard = document.createElement('div');
       formCard.className = 'wander-card';
       
@@ -679,7 +664,6 @@
       formCard.innerHTML = formCardHtml;
       container.appendChild(formCard);
 
-      // --- 2. 建立後續卡片：歷史紀錄卡片 ---
       historyRows.forEach((row, rIdx) => {
         const histCard = document.createElement('div');
         histCard.className = 'wander-card';
@@ -721,7 +705,6 @@
       updateDetailCarousel();
     }
 
-    // 處理圖片轉 Base64 預覽
     function handleImageUpload(event, fileEl) {
       const file = event.target.files[0];
       const hiddenInput = fileEl.parentNode.querySelector('.field-input');
@@ -741,7 +724,6 @@
       }
     }
 
-    // 表單發送
     function submitForm() {
       const inputs = document.querySelectorAll('#detail-cards-wrapper .field-input');
       let rowData = [];
@@ -767,12 +749,10 @@
       });
     }
 
-    /* ================= 底部 Indicator 與控制 ================= */
     function renderDots(total, current) {
       const container = document.getElementById('dots-container');
       container.innerHTML = "";
       
-      // 指示點最多顯示 6 個避免過多
       const showCount = Math.min(total, 6);
       for (let i = 0; i < showCount; i++) {
         const dot = document.createElement('div');
@@ -789,7 +769,6 @@
       }
     }
 
-    // 初始化主畫面
     updateMainCarousel();
   </script>
 </body>
