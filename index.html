@@ -17,15 +17,16 @@
       4: "1Y5TMD9Qgxcy6OAcqXWu2ODOU9I_OhRjN",              // 減肥紀錄 (HEALTH)
       5: "16g5ebuSdfHSMbragn0mluNCPE3Ynu4t_"  // 全螢幕背景圖
     };
+
     function getImgUrl(id) {
       if (!id || id.startsWith("填入")) {
         return "https://lh3.googleusercontent.com/d/16g5ebuSdfHSMbragn0mluNCPE3Ynu4t_";
       }
-      if (id.startsWith("http")) return id; // 支援外部圖床網址
+      if (id.startsWith("http")) return id;
       return `https://lh3.googleusercontent.com/d/${id}`;
     }
 
-    // 🚀 JS 圖片預載（在頁面載入前先將圖片打入快取）
+    // 圖片預載
     Object.values(DRIVE_IDS).forEach(id => {
       const img = new Image();
       img.src = getImgUrl(id);
@@ -415,6 +416,30 @@
       color: var(--text-white);
     }
 
+    /* 月度統計專用卡片樣式 */
+    .summary-box {
+      background: rgba(18, 22, 25, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .summary-month {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent-gold);
+    }
+
+    .summary-total {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--accent-green);
+    }
+
     .clickable-img {
       cursor: zoom-in;
       transition: transform 0.2s ease, opacity 0.2s ease;
@@ -506,7 +531,7 @@
 </head>
 <body>
 
-  <!-- 高級 Toast 提示通知元件 -->
+  <!-- Toast 提示元件 -->
   <div id="custom-toast" class="custom-toast">
     <span>✨</span> <span id="toast-msg">紀錄已成功發送！</span>
   </div>
@@ -740,14 +765,59 @@
       return val;
     }
 
+    // 自動計算「日常記帳」的各月總支出
+    function calculateMonthlySummary(headers, rows) {
+      // 找出「日期」與「金額」對應的欄位索引
+      let dateIdx = -1;
+      let amountIdx = -1;
+
+      headers.forEach((h, idx) => {
+        if (!h) return;
+        const lower = h.toLowerCase();
+        if (dateIdx === -1 && (lower.includes('日期') || lower.includes('date'))) {
+          dateIdx = idx;
+        }
+        if (amountIdx === -1 && (lower.includes('金額') || lower.includes('費用') || lower.includes('支出') || lower.includes('amount') || lower.includes('price'))) {
+          amountIdx = idx;
+        }
+      });
+
+      if (dateIdx === -1 || amountIdx === -1) return null;
+
+      const monthlyTotals = {}; // 儲存 { '2026-07': 1500, '2026-06': 2300 }
+
+      rows.forEach(row => {
+        const rawDate = row[dateIdx];
+        const formattedDate = formatDateValue(rawDate);
+        const rawAmount = row[amountIdx];
+
+        if (formattedDate && formattedDate !== '—') {
+          // 抓取 YYYY-MM
+          const monthKey = formattedDate.substring(0, 7); 
+          const numAmount = parseFloat(String(rawAmount).replace(/[^0-9.-]+/g, "")) || 0;
+
+          if (monthKey.length === 7) {
+            monthlyTotals[monthKey] = (monthlyTotals[monthKey] || 0) + numAmount;
+          }
+        }
+      });
+
+      return monthlyTotals;
+    }
+
     function buildDetailCards(headers, rows) {
       const container = document.getElementById('detail-cards-wrapper');
       container.innerHTML = "";
 
       const historyRows = [...rows].reverse();
-      totalDetailCards = 1 + historyRows.length;
 
-      // 1. 新增表單卡片
+      // 判斷是否為「日常記帳」，如果是，就多插入一張「月度統計卡片」
+      const isBookkeeping = (currentSheet === '日常記帳');
+      const hasSummaryCard = isBookkeeping;
+
+      totalDetailCards = 1 + (hasSummaryCard ? 1 : 0) + historyRows.length;
+
+      // --- 1. 新增表單卡片 ---
       const formCard = document.createElement('div');
       formCard.className = 'wander-card';
       
@@ -797,7 +867,42 @@
       formCard.innerHTML = formCardHtml;
       container.appendChild(formCard);
 
-      // 2. 歷史紀錄卡片
+      // --- 2. 專屬：月度統計卡片 (僅日常記帳顯示) ---
+      if (hasSummaryCard) {
+        const summaryTotals = calculateMonthlySummary(headers, rows);
+        const summaryCard = document.createElement('div');
+        summaryCard.className = 'wander-card';
+
+        let summaryHtml = `
+          <div class="inner-card-title">📊 每月支出總計</div>
+          <div class="inner-card-body">
+        `;
+
+        if (summaryTotals && Object.keys(summaryTotals).length > 0) {
+          // 依月份降序排列
+          const sortedMonths = Object.keys(summaryTotals).sort().reverse();
+          sortedMonths.forEach(m => {
+            const formattedTotal = summaryTotals[m].toLocaleString('zh-TW', { style: 'currency', currency: 'TWD', minimumFractionDigits: 0 });
+            summaryHtml += `
+              <div class="summary-box">
+                <span class="summary-month">📅 ${m}</span>
+                <span class="summary-total">${formattedTotal}</span>
+              </div>
+            `;
+          });
+        } else {
+          summaryHtml += `<div class="loading-box">尚無可統計的月度金額資料</div>`;
+        }
+
+        summaryHtml += `</div>
+          <div style="text-align:center; font-size:0.75rem; color:var(--text-dim);">← 左滑新增 / 右滑明細</div>
+        `;
+
+        summaryCard.innerHTML = summaryHtml;
+        container.appendChild(summaryCard);
+      }
+
+      // --- 3. 歷史紀錄卡片 ---
       historyRows.forEach((row, rIdx) => {
         const histCard = document.createElement('div');
         histCard.className = 'wander-card';
@@ -832,7 +937,7 @@
         });
 
         histHtml += `</div>
-          <div style="text-align:center; font-size:0.75rem; color:var(--text-dim);">← 左滑新增 / 右滑更多歷史</div>
+          <div style="text-align:center; font-size:0.75rem; color:var(--text-dim);">← 左滑看統計 / 右滑更多歷史</div>
         `;
 
         histCard.innerHTML = histHtml;
